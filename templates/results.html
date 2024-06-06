@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autotune Results - MUS 17</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Autotune Results - MUS 17</h1>
+        </header>
+        <main>
+            <h2>Pitch Plot</h2>
+            <img src="{{ url_for('static', filename='pitch_plot.png') }}" alt="Pitch Plot">
+            <h2>Processed Files</h2>
+            <ul>
+                {% for file in output_files %}
+                    <li><a href="{{ url_for('download_file', session_id=file.split('/')[0], filename=file.split('/')[1]) }}">{{ file.split('/')[1] }}</a></li>
+                {% endfor %}
+            </ul>
+            <a href="/" class="button">Upload Another File</a>
+        </main>
+        <footer>
+            <p>&copy; 2024 MUS 17 Project</p>
+        </footer>
+    </div>
+</body>
+</html>
