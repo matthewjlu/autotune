@@ -28,5 +28,5 @@ This project is a web application that allows users to upload an audio file, aut
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/audio-autotune.git
+git clone git@github.com:matthewjlu/autotune.git
 cd audio-autotune
