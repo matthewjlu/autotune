@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Autotune - MUS 17</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Live Autotune - MUS 17</h1>
+        </header>
+        <main>
+            <h2>Live Autotune</h2>
+            <p>This is a placeholder for the live autotune functionality.</p>
+            <button onclick="startRecording()">Start Recording</button>
+            <button onclick="stopRecording()">Stop Recording</button>
+            <audio id="audioPlayer" controls></audio>
+        </main>
+        <footer>
+            <p>&copy; 2024 MUS 17 Project</p>
+        </footer>
+    </div>
+    <script>
+        const socket = io();
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('processed_audio', function(data) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const blob = new Blob([data], { type: 'audio/wav' });
+            audioPlayer.src = URL.createObjectURL(blob);
+            audioPlayer.play();
+        });
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        audioChunks = [];
+                        convertAndSendAudio(audioBlob);
+                    };
+                    mediaRecorder.start();
+                })
+                .catch(error => console.error('Error accessing media devices.', error));
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+        }
+
+        function convertAndSendAudio(blob) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const buffer = reader.result;
+                socket.emit('audio_data', buffer);
+            };
+            reader.readAsArrayBuffer(blob);
+        }
+    </script>
+</body>
+</html>

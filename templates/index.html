@@ -17,10 +17,17 @@
                 <input type="file" name="file" required>
                 <button type="submit">Upload</button>
             </form>
+            <h2>Or Autotune Live</h2>
+            <button onclick="startLiveAutotune()">Start Live Autotune</button>
         </main>
         <footer>
             <p>&copy; 2024 MUS 17 Project</p>
         </footer>
     </div>
+    <script>
+        function startLiveAutotune() {
+            window.location.href = '/live';
+        }
+    </script>
 </body>
 </html>
